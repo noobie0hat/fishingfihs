@@ -69,7 +69,7 @@ function convert(img){
   const px=ctx.getImageData(0,0,w,h).data,vals=[];
   for(let i=0;i<px.length;i+=4) vals.push(px[i],px[i+1],px[i+2]);
   // Include dimensions so the Roblox script can resize the correct source shape.
-  rgbText=`WIDTH=${w} HEIGHT=${h}\n`+vals.join(",");
+  rgbText=`FPS=20 WIDTH=${w} HEIGHT=${h}\n---\n`+vals.join(",");
   $("output").value=rgbText;
   $("status").textContent=`Done: ${w} × ${h} = ${w*h} blocks.`;
   $("copy").disabled=$("download").disabled=false;
