@@ -34,6 +34,18 @@ textarea{min-height:150px;overflow-wrap:anywhere}.small{font-size:.9rem;color:#9
 <textarea id="output" readonly placeholder="Your RGB data will appear here…"></textarea>
 <button id="copy" disabled>Copy RGB data</button>
 <button id="download" disabled>Download RGB text file</button>
+<section id="uploadGuide" style="margin-top:18px;padding:14px;border:1px solid #475569;border-radius:12px;background:#172033">
+ <h2 style="font-size:1.05rem;margin:0 0 8px">Load this image in Roblox without pasting the RGB numbers</h2>
+ <ol style="padding-left:22px;line-height:1.55;color:#cbd5e1">
+  <li>Tap <b>Download RGB text file</b>. It saves as <code>roblox-image-rgb.txt</code>.</li>
+  <li>Open <a href="https://github.com/noobie0hat/fishingfihs/upload/main/rgb" target="_blank" rel="noopener" style="color:#93c5fd">your GitHub RGB upload page</a> and sign in.</li>
+  <li>Upload the downloaded text file. Keep its name as <code>roblox-image-rgb.txt</code>, then commit the change.</li>
+  <li>In Roblox, open Pixel Image Builder's RGB URL box and paste this URL:</li>
+ </ol>
+ <input id="rawUrl" readonly value="https://raw.githubusercontent.com/noobie0hat/fishingfihs/main/rgb/roblox-image-rgb.txt" aria-label="Raw RGB file URL">
+ <button id="copyRawUrl" type="button">Copy Roblox RGB URL</button>
+ <p class="small">When you convert another image, upload the new text file to the same place and replace the old file. Do not paste the RGB numbers into Roblox.</p>
+</section>
 <p class="small">The converter runs locally in Safari. It does not upload your chosen photo anywhere.</p>
 </main>
 <script>
@@ -80,4 +92,5 @@ $("convert").addEventListener("click",()=>{
 });
 $("copy").addEventListener("click",async()=>{try{await navigator.clipboard.writeText(rgbText);$("status").textContent="Copied RGB data!";}catch{$("output").focus();$("output").select();$("status").textContent="Select the text and use Copy.";}});
 $("download").addEventListener("click",()=>{const a=document.createElement("a");const u=URL.createObjectURL(new Blob([rgbText],{type:"text/plain"}));a.href=u;a.download="roblox-image-rgb.txt";a.click();URL.revokeObjectURL(u);});
+$("copyRawUrl").addEventListener("click",async()=>{const v=$("rawUrl").value;try{await navigator.clipboard.writeText(v);$("status").textContent="Roblox RGB URL copied! Upload the TXT file first.";}catch{$("rawUrl").focus();$("rawUrl").select();$("status").textContent="Select the URL and use Copy. Upload the TXT file first.";}});
 </script></body></html>
