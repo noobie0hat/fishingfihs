@@ -285,8 +285,9 @@ WindowCorner.Parent=Window
 local Stroke=
 	Instance.new("UIStroke")
 
-Stroke.Thickness=1
-Stroke.Transparency=0.35
+Stroke.Thickness=1.25
+Stroke.Color=Color3.fromRGB(64,190,255)
+Stroke.Transparency=0.18
 Stroke.Parent=Window
 end
 
@@ -303,7 +304,8 @@ Header.Size=
 		38
 	)
 
-Header.BackgroundTransparency=1
+Header.BackgroundColor3=Color3.fromRGB(20,31,48)
+Header.BackgroundTransparency=0
 Header.Active=true
 Header.ZIndex=2
 Header.Parent=Window
@@ -368,27 +370,23 @@ Status.Size=
 		1,
 		-16,
 		0,
-		24
+		22
 	)
 
 Status.Position=
 	UDim2.fromOffset(
 		8,
-		38
+		42
 	)
 
-Status.BackgroundTransparency=1
+Status.BackgroundColor3=Color3.fromRGB(24,39,57)
+Status.BackgroundTransparency=0
 Status.Text="READY"
 
-Status.TextColor3=
-	Color3.fromRGB(
-		180,
-		180,
-		190
-	)
+Status.TextColor3=Color3.fromRGB(105,210,255)
 
 Status.TextSize=10
-Status.Font=Enum.Font.Code
+Status.Font=Enum.Font.GothamBold
 Status.TextXAlignment=
 	Enum.TextXAlignment.Left
 
@@ -457,13 +455,13 @@ Content.Size=
 		1,
 		-12,
 		1,
-		-70
+		-76
 	)
 
 Content.Position=
 	UDim2.fromOffset(
 		6,
-		66
+		70
 	)
 
 Content.BackgroundTransparency=1
@@ -691,15 +689,20 @@ PlayCustomBAButton.Parent=nil
 BAURLButton.Parent=nil
 
 -- Consistent modern palette for the new Pixel Builder interface.
-Window.BackgroundColor3=Color3.fromRGB(17,23,34)
+Window.BackgroundColor3=Color3.fromRGB(12,18,30)
 for _,Control in ipairs(Content:GetChildren()) do
 	if Control:IsA("TextButton") then
-		Control.BackgroundColor3=Color3.fromRGB(37,51,70)
-		Control.TextColor3=Color3.fromRGB(238,244,255)
+		Control.BackgroundColor3=Color3.fromRGB(30,46,66)
+		Control.TextColor3=Color3.fromRGB(238,246,255)
 		Control.TextSize=12
+		local Accent=Instance.new("UIStroke")
+		Accent.Color=Color3.fromRGB(54,126,166)
+		Accent.Transparency=0.55
+		Accent.Thickness=1
+		Accent.Parent=Control
 	end
 end
-Status.Text="READY • USE RGB PIXEL DATA, NOT PNG/JPG"
+Status.Text="READY • RGB PIXEL BUILDER"
 
 
 local IDWindow,IDBox,IDConfirm
@@ -3913,10 +3916,10 @@ function LoadStartup()
 	end
 
 	if not STARTUP_URL or STARTUP_URL=="" then
-		StartupMissing=true
+		-- Startup animation is optional. No URL means skip it quietly.
+		StartupMissing=false
 		StartupFrames=nil
-		Status.Text="STARTUP URL EMPTY → 404"
-		return false
+		return true
 	end
 
 	Status.Text="LOADING STARTUP RGB..."
@@ -4965,36 +4968,9 @@ local function MakeTextRGBFrame(Message,Fg,Bg)
 end
 
 function PlayMissingStartupSequence(Token)
-	Status.Text="404 STARTUP NOT FOUND!"
-	-- pesan pendek di grid kecil
-	local Line2=(X_SIZE>=40) and "NOT FOUND" or "NF"
-	local Frames={
-		MakeTextRGBFrame("404",Color3.fromRGB(255,70,70)),
-		MakeTextRGBFrame(Line2,Color3.fromRGB(255,120,80)),
-		MakeTextRGBFrame("3",Color3.fromRGB(255,220,80)),
-		MakeTextRGBFrame("2",Color3.fromRGB(255,220,80)),
-		MakeTextRGBFrame("1",Color3.fromRGB(120,255,120)),
-	}
-	local Durations={1.15,1.15,1.0,1.0,1.0}
-	local Labels={"404 STARTUP NOT FOUND!","404 STARTUP NOT FOUND!","COUNTDOWN 3","COUNTDOWN 2","COUNTDOWN 1"}
-	local First=true
-	for i,Frame in ipairs(Frames) do
-		if IsCancelled(Token) then
-			return false
-		end
-		Status.Text=Labels[i] or "404 STARTUP"
-		local t0=os.clock()
-		local OK=PaintFrame(Frame,First,Token,true,false)
-		if not OK then
-			return false
-		end
-		First=false
-		local WaitLeft=Durations[i]-(os.clock()-t0)
-		if WaitLeft>0 then
-			task.wait(WaitLeft)
-		end
-	end
-	return true
+	-- Only show an error when a startup URL was configured but could not load.
+	Status.Text="404 NOT FOUND"
+	return not IsCancelled(Token)
 end
 
 function PlayStartup(
@@ -5446,7 +5422,7 @@ local function SafeRun(Name,Fn,...)
 		PlayBadAppleButton.Text="PLAY BAD APPLE"
 		PlayRGBButton.Text="RENDER RGB IMAGE"
 		PlayCustomBAButton.Text="PLAY CUSTOM BA"
-		Status.Text="ERROR "..Name..": "..string.sub(tostring(Err),1,80)
+		Status.Text="404 NOT FOUND"
 	end
 end
 
